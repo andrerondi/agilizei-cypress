@@ -1,5 +1,7 @@
 /// <reference types='cypress' />
 
+import { format, prepareLocalStorage } from '../support/utils'
+
 // cy.viewport
 // arquivos de config
 // passar as configs por linha de comando
@@ -14,8 +16,12 @@ context('Dev Finances Agilizei', () => {
     // afterEach -> depois de cada teste
 
     beforeEach(() => {
-        cy.visit('https://devfinance-agilizei.netlify.app')
-        cy.get('#data-table tbody tr').should('have.length', 0)
+        cy.visit('https://devfinance-agilizei.netlify.app', {
+            onBeforeLoad: (win) => {
+                prepareLocalStorage(win)
+            }
+        })
+        //cy.get('#data-table tbody tr').should('have.length', 2)
     });
 
     it('Cadastrar entradas', () => {
@@ -76,5 +82,38 @@ context('Dev Finances Agilizei', () => {
 
         cy.get('#data-table tbody tr').should('have.length', 0)
 
+    });
+
+    it.only('Validar saldo com diversas transações', () => {
+
+        // capturar as linhas com as transacoes e as colunas com valores
+        // capturar o texto dessas colunas
+        // formatar esses valores das linhas
+        // somar os valores de entradas e saidas
+        // capturar o texto do total
+        // comparar o somatorio de entradas e despesas com o total
+
+        let incomes = 0
+        let expenses = 0
+
+        cy.get('#data-table tbody tr').each(($el, index, $list) => {
+            cy.get($el).find('td.income, td.expense')
+                .invoke('text').then(text => {
+                    if(text.includes('-')) {
+                        expenses = expenses + format(text)
+                    } else {
+                        incomes = incomes + format(text)
+                    }
+
+                    cy.log('entradas', incomes)
+                    cy.log('saidas', expenses)
+                })
+        })
+        cy.get('#totalDisplay').invoke('text').then(text => {
+            let formatedTotalDisplay = format(text)
+            let expectedTotal = incomes + expenses
+
+            expect(formatedTotalDisplay).to.eq(expectedTotal)
+        })
     });
 });
