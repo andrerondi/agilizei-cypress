@@ -36,7 +36,7 @@ context('Dev Finances Agilizei', () => {
         cy.get('[type=date]').type('2021-03-17') // atributos
         cy.get('button').contains('Salvar').click() // tipo e valor
 
-        cy.get('#data-table tbody tr').should('have.length', 1)
+        cy.get('#data-table tbody tr').should('have.length', 3)
     });
 
     it('Cadastrar saídas', () => {
@@ -47,7 +47,6 @@ context('Dev Finances Agilizei', () => {
         cy.get('[type=date]').type('2021-03-17') // atributos
         cy.get('button').contains('Salvar').click() // tipo e valor
 
-        cy.get('#data-table tbody tr').should('have.length', 1)
     });
 
     it('Remover entradas e saídas', () => {
@@ -80,11 +79,11 @@ context('Dev Finances Agilizei', () => {
             .children('img[onclick*=remove]')
             .click()
 
-        cy.get('#data-table tbody tr').should('have.length', 0)
+        cy.get('#data-table tbody tr').should('have.length', 2)
 
     });
 
-    it.only('Validar saldo com diversas transações', () => {
+    it('Validar saldo com diversas transações', () => {
 
         // capturar as linhas com as transacoes e as colunas com valores
         // capturar o texto dessas colunas
